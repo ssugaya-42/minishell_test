@@ -17,9 +17,8 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->env_list = env_init(envp);
 	shell->envp = NULL;
 	shell->last_status = 0;
-	shell->stdin_backup = dup(STDIN_FILENO);
-	shell->stdout_backup = dup(STDOUT_FILENO);
+	shell->stdin_backup = -1;
+	shell->stdout_backup = -1;
 	shell->last_pid = -1;
 	shell->is_interactive = isatty(STDIN_FILENO);
 }
-

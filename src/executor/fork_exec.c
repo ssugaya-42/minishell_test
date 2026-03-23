@@ -52,6 +52,8 @@ int	exec_external(t_cmd *cmd, t_shell *shell)
 	}
 	if (pid == 0)
 	{
+		if (!apply_redirs(cmd->redirs))
+			exit(1);
 		execve(cmd_path, cmd->argv, shell->envp);
 		print_error("minishell", cmd->argv[0], strerror(errno));
 		free(cmd_path);
@@ -59,4 +61,22 @@ int	exec_external(t_cmd *cmd, t_shell *shell)
 	}
 	free(cmd_path);
 	return (wait_child(pid, shell));
+}
+
+int	exec_external_child(t_cmd *cmd, t_shell *shell)
+{
+	char	*cmd_path;
+
+	if (!cmd || !cmd->argv || !cmd->argv[0])
+		exit(1);
+	cmd_path = resolve_command_path(cmd->argv[0], shell);
+	if (!cmd_path)
+	{
+		print_error("minishell", cmd->argv[0], "command not found");
+		exit(127);
+	}
+	execve(cmd_path, cmd->argv, shell->envp);
+	print_error("minishell", cmd->argv[0], strerror(errno));
+	free(cmd_path);
+	exit(126);
 }
