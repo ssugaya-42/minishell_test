@@ -63,11 +63,17 @@ int	apply_redirs(t_redir *redirs)
 		}
 		fd = open_redir_file(redirs);
 		if (fd < 0)
-			return (print_error("minishell", redirs->file,
-					"failed to open redirection file"));
+		{
+			print_error("minishell", redirs->file,
+				"failed to open redirection file");
+			return (0);
+		}
 		if (!redirect_fd(redirs, fd))
-			return (print_error("minishell", redirs->file,
-					"failed to redirect file descriptor"));
+		{
+			print_error("minishell", redirs->file,
+				"failed to redirect file descriptor");
+			return (0);
+		}
 		redirs = redirs->next;
 	}
 	return (1);

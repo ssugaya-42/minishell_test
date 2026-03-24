@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   ms_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-23 11:46:23 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-23 11:46:23 by ssugaya          ###   ########.fr       */
+/*   Created: 2026-03-23 11:45:50 by ssugaya           #+#    #+#             */
+/*   Updated: 2026-03-23 11:45:50 by ssugaya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	expand_cmds(t_cmd *cmds, t_shell *shell)
+int	ms_exit(t_cmd *cmd, t_shell *shell)
 {
-	(void)cmds;
+	(void)cmd;
 	(void)shell;
+	exit(0);
 }

@@ -1,19 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   ft_isascii.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
+/*   By: vmatsuda <vmatsuda@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-23 11:46:23 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-23 11:46:23 by ssugaya          ###   ########.fr       */
+/*   Created: 2025/04/25 21:06:57 by vmatsuda          #+#    #+#             */
+/*   Updated: 2025/05/09 19:44:08 by vmatsuda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shell.h"
+#include "libft.h"
 
-void	expand_cmds(t_cmd *cmds, t_shell *shell)
+int	ft_isascii(int c)
 {
-	(void)cmds;
-	(void)shell;
+	if (0 <= c && c <= 127)
+		return (TRUE);
+	return (FALSE);
 }
+
+// int	main(void)
+// {
+// 	printf("%d\n", ft_isascii('a'));
+// 	printf("%d\n", ft_isascii(256));
+// 	return (0);
+// }

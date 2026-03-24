@@ -40,31 +40,52 @@ static int	wait_all_children(pid_t last_pid, t_shell *shell)
 	return (shell->last_status);
 }
 
-static int	child_exec(t_cmd *cmd, t_shell *shell, int prev_fd, int pipe_fd[2])
+static void	close_pipe_fds(int prev_fd, int pipe_fd[2])
 {
 	if (prev_fd != -1)
-	{
-		if (dup2(prev_fd, STDIN_FILENO) == -1)
-			return (print_error("minishell", "dup2", strerror(errno)));
-	}
-	if (cmd->next)
-	{
-		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
-			return (print_error("minishell", "dup2", strerror(errno)));
-	}
-	if (prev_fd != -1)
 		close(prev_fd);
-	if (cmd->next)
-	{
+	if (pipe_fd[0] != -1)
 		close(pipe_fd[0]);
+	if (pipe_fd[1] != -1)
 		close(pipe_fd[1]);
-	}
+}
+
+static void	child_exec(t_cmd *cmd, t_shell *shell, int prev_fd, int pipe_fd[2])
+{
+	if (prev_fd != -1 && dup2(prev_fd, STDIN_FILENO) == -1)
+		exit(print_error("minishell", "dup2", strerror(errno)));
+	if (cmd->next && dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+		exit(print_error("minishell", "dup2", strerror(errno)));
+	close_pipe_fds(prev_fd, pipe_fd);
 	if (!apply_redirs(cmd->redirs))
 		exit(1);
 	if (is_builtin(cmd))
 		exit(exec_builtin(cmd, shell));
 	exec_external_child(cmd, shell);
-	
+}
+
+static int	close_pipe_and_error(int pipe_fd[2], char *target)
+{
+	if (pipe_fd[0] != -1)
+		close(pipe_fd[0]);
+	if (pipe_fd[1] != -1)
+		close(pipe_fd[1]);
+	return (print_error("minishell", target, strerror(errno)));
+}
+
+static void	update_parent_pipe_state(t_cmd *cmd, int *prev_fd,
+		int pipe_fd[2], pid_t pid, pid_t *last_pid)
+{
+	if (*prev_fd != -1)
+		close(*prev_fd);
+	if (cmd->next)
+	{
+		close(pipe_fd[1]);
+		*prev_fd = pipe_fd[0];
+	}
+	else
+		*prev_fd = -1;
+	*last_pid = pid;
 }
 
 static int	fork_pipeline_node(t_cmd *cmd, t_shell *shell, int *prev_fd,
@@ -79,19 +100,10 @@ static int	fork_pipeline_node(t_cmd *cmd, t_shell *shell, int *prev_fd,
 		return (print_error("minishell", "pipe", strerror(errno)));
 	pid = fork();
 	if (pid < 0)
-		return (print_error("minishell", "fork", strerror(errno)));
+		return (close_pipe_and_error(pipe_fd, "fork"));
 	if (pid == 0)
 		child_exec(cmd, shell, *prev_fd, pipe_fd);
-	if (*prev_fd != -1)
-		close(*prev_fd);
-	if (cmd->next)
-	{
-		close(pipe_fd[1]);
-		*prev_fd = pipe_fd[0];
-	}
-	else
-		*prev_fd = -1;
-	*last_pid = pid;
+	update_parent_pipe_state(cmd, prev_fd, pipe_fd, pid, last_pid);
 	return (1);
 }
 
