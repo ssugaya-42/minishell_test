@@ -62,8 +62,7 @@ int	exec_external(t_cmd *cmd, t_shell *shell)
 	free(cmd_path);
 	return (wait_child(pid, shell));
 }
-
-int	exec_external_child(t_cmd *cmd, t_shell *shell)
+void	exec_external_child(t_cmd *cmd, t_shell *shell)
 {
 	char	*cmd_path;
 

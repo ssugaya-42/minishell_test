@@ -1,19 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   ft_isprint.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
+/*   By: vmatsuda <vmatsuda@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-23 11:46:23 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-23 11:46:23 by ssugaya          ###   ########.fr       */
+/*   Created: 2025/04/24 21:57:53 by vmatsuda          #+#    #+#             */
+/*   Updated: 2025/05/07 20:05:20 by vmatsuda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shell.h"
+#include "libft.h"
 
-void	expand_cmds(t_cmd *cmds, t_shell *shell)
+int	ft_isprint(int c)
 {
-	(void)cmds;
-	(void)shell;
+	if (32 <= c && c <= 126)
+		return (TRUE);
+	return (FALSE);
 }
+
+// int	main(void)
+// {
+// 	printf("%d\n", ft_isprint(' '));
+// 	printf("%d\n", ft_isprint('\0'));
+// 	return (0);
+// }

@@ -1,19 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
+/*   By: vmatsuda <vmatsuda@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-23 11:46:23 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-23 11:46:23 by ssugaya          ###   ########.fr       */
+/*   Created: 2025/04/25 21:15:10 by vmatsuda          #+#    #+#             */
+/*   Updated: 2025/05/07 21:41:24 by vmatsuda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shell.h"
+#include "libft.h"
 
-void	expand_cmds(t_cmd *cmds, t_shell *shell)
+size_t	ft_strlen(const char *str)
 {
-	(void)cmds;
-	(void)shell;
+	const char	*p;
+
+	p = str;
+	while (*p)
+		p++;
+	return (p - str);
 }
+
+// int	main(void)
+// {
+// 	printf("%zu", ft_strlen("abcd"));
+// 	return (0);
+// }

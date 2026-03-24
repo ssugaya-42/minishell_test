@@ -1,19 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-23 11:46:23 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-23 11:46:23 by ssugaya          ###   ########.fr       */
+/*   Created: 2026-03-23 11:23:33 by ssugaya           #+#    #+#             */
+/*   Updated: 2026-03-23 11:23:33 by ssugaya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	expand_cmds(t_cmd *cmds, t_shell *shell)
+int	ms_echo(t_cmd *cmd)
 {
-	(void)cmds;
-	(void)shell;
+	int	i;
+
+	i = 1;
+	while (cmd->argv[i])
+	{
+		printf("%s", cmd->argv[i]);
+		if (cmd->argv[i + 1])
+			printf(" ");
+		i++;
+	}
+	printf("\n");
+	return (0);
 }

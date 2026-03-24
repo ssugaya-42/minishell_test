@@ -8,10 +8,12 @@
 # include <fcntl.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <errno.h>
+# include <string.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "enum.h"
-# include "../libft/libft.h"
+# include "libft.h"
 # include "struct.h"
 
 /*
@@ -41,6 +43,9 @@ int		is_redir_token(t_token_type type);
 t_cmd	*parse_tokens(t_token *tokens);
 t_cmd	*cmd_new(void);
 void	cmd_add_back(t_cmd **lst, t_cmd *new_cmd);
+int		parse_redirs(t_cmd *cmd, t_token *tokens);
+t_redir	*redir_new(t_token_type type, char *file);
+void	redir_add_back(t_redir **lst, t_redir *new_redir);
 
 /*
 ** expander
@@ -54,6 +59,10 @@ int		execute_cmds(t_cmd *cmds, t_shell *shell);
 int		execute_single_cmd(t_cmd *cmd, t_shell *shell);
 int		execute_pipeline(t_cmd *cmds, t_shell *shell);
 int		is_builtin(t_cmd *cmd);
+int		exec_builtin(t_cmd *cmd, t_shell *shell);
+int		exec_external(t_cmd *cmd, t_shell *shell);
+void	exec_external_child(t_cmd *cmd, t_shell *shell);
+char	*resolve_command_path(char *cmd_name, t_shell *shell);
 
 /*
 ** builtin
@@ -81,7 +90,8 @@ void	free_envp(char **envp);
 */
 int		apply_redirs(t_redir *redirs);
 int		handle_heredoc(t_redir *redir, t_shell *shell);
-void	restore_stdio(t_shell *shell);
+int		backup_stdio(t_shell *shell);
+int		restore_stdio(t_shell *shell);
 
 /*
 ** signal
