@@ -23,6 +23,11 @@ SRCS		= \
 	src/utils/free.c \
 	src/utils/error.c \
 	src/env/env_init.c \
+	src/env/env_get.c \
+	src/env/env_set.c \
+	src/env/env_unset.c \
+	src/env/env_to_envp.c \
+	src/env/free_envp.c \
 	src/lexer/token_append.c \
 	src/lexer/tokenize.c \
 	src/syntax/syntax_check.c \
