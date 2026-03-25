@@ -12,12 +12,12 @@
 
 #include "shell.h"
 
-int	env_unset_value(t_env **env, char *key)
+int	env_unset_value(t_env **env, const char *key)
 {
 	t_env	*cur;
 	t_env	*prev;
 
-	if (!env || !*env || !key)
+	if (!env || !key)
 		return (0);
 	cur = *env;
 	prev = NULL;

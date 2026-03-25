@@ -25,13 +25,11 @@ static int	env_count(t_env *env)
 	return (count);
 }
 
-static char	*join_env_entry(char *key, char *value)
+static char	*join_env_entry(const char *key, const char *value)
 {
 	char	*tmp;
 	char	*entry;
 
-	if (!value)
-		return (ft_strdup(key));
 	tmp = ft_strjoin(key, "=");
 	if (!tmp)
 		return (NULL);

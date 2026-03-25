@@ -12,53 +12,14 @@
 
 #include "shell.h"
 
-static t_env	*env_new_node(char *key, char *value)
+static char	*dup_env_value(const char *value)
 {
-	t_env	*new_node;
-
-	new_node = malloc(sizeof(t_env));
-	if (!new_node)
-		return (NULL);
-	new_node->key = ft_strdup(key);
-	if (!new_node->key)
-	{
-		free(new_node);
-		return (NULL);
-	}
 	if (value)
-	{
-		new_node->value = ft_strdup(value);
-		if (!new_node->value)
-		{
-			free(new_node->key);
-			free(new_node);
-			return (NULL);
-		}
-	}
-	else
-		new_node->value = NULL;
-	new_node->next = NULL;
-	return (new_node);
+		return (ft_strdup(value));
+	return (ft_strdup(""));
 }
 
-static void	env_add_back(t_env **env, t_env *new_node)
-{
-	t_env	*cur;
-
-	if (!env || !new_node)
-		return ;
-	if (!*env)
-	{
-		*env = new_node;
-		return ;
-	}
-	cur = *env;
-	while (cur->next)
-		cur = cur->next;
-	cur->next = new_node;
-}
-
-int	env_set_value(t_env **env, char *key, char *value)
+int	env_set_value(t_env **env, const char *key, const char *value)
 {
 	t_env	*cur;
 	char	*new_value;
@@ -70,13 +31,9 @@ int	env_set_value(t_env **env, char *key, char *value)
 	{
 		if (ft_strcmp(cur->key, key) == 0)
 		{
-			new_value = NULL;
-			if (value)
-			{
-				new_value = ft_strdup(value);
-				if (!new_value)
-					return (0);
-			}
+			new_value = dup_env_value(value);
+			if (!new_value)
+				return (0);
 			free(cur->value);
 			cur->value = new_value;
 			return (1);

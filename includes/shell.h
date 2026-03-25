@@ -1,17 +1,18 @@
 #ifndef SHELL_H
 # define SHELL_H
 
-# include <unistd.h>
-# include <stdlib.h>
 # include <stdio.h>
-# include <stdbool.h>
+# include <stdlib.h>
+# include <unistd.h>
 # include <fcntl.h>
-# include <signal.h>
 # include <sys/wait.h>
-# include <errno.h>
-# include <string.h>
+# include <sys/stat.h>
+# include <sys/types.h>
+# include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <errno.h>
+# include <string.h>
 # include "enum.h"
 # include "libft.h"
 # include "struct.h"
@@ -79,10 +80,13 @@ int		ms_exit(t_cmd *cmd, t_shell *shell);
 ** env
 */
 t_env	*env_init(char **envp);
-char	*env_get_value(t_env *env, char *key);
-int		env_set_value(t_env **env, char *key, char *value);
-int		env_unset_value(t_env **env, char *key);
+t_env	*env_new_node(const char *key, const char *value);
+void	env_add_back(t_env **env, t_env *new_node);
+char	*env_get_value(t_env *env, const char *key);
+int		env_set_value(t_env **env, const char *key, const char *value);
+int		env_unset_value(t_env **env, const char *key);
 char	**env_to_envp(t_env *env);
+int		shell_refresh_envp(t_shell *shell);
 void	free_envp(char **envp);
 
 /*
@@ -107,7 +111,6 @@ void	free_redirs(t_redir *redirs);
 void	free_cmds(t_cmd *cmds);
 void	free_shell(t_shell *shell);
 void	free_str_array(char **arr);
-
 int		print_syntax_error(char *near_token);
 int		print_error(char *prefix, char *target, char *message);
 void	fatal_error(char *message);
