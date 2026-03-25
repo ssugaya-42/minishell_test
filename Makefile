@@ -16,6 +16,7 @@ SRCS		= \
 	src/builtin/ms_unset.c \
 	src/builtin/ms_exit.c \
 	src/expander/expand.c \
+	src/expander/expand_utils.c \
 	src/signal/signals.c \
 	src/main/main.c \
 	src/main/init.c \
