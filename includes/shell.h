@@ -52,6 +52,7 @@ void	redir_add_back(t_redir **lst, t_redir *new_redir);
 ** expander
 */
 void	expand_cmds(t_cmd *cmds, t_shell *shell);
+int		expand_one_str(char **str, t_shell *shell);
 
 /*
 ** executor
