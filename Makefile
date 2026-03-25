@@ -28,6 +28,8 @@ SRCS		= \
 	src/env/env_unset.c \
 	src/env/env_to_envp.c \
 	src/env/free_envp.c \
+	src/env/env_node.c \
+	src/env/env_sync.c \
 	src/lexer/token_append.c \
 	src/lexer/tokenize.c \
 	src/syntax/syntax_check.c \

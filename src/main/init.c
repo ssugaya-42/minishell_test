@@ -15,7 +15,7 @@
 void	init_shell(t_shell *shell, char **envp)
 {
 	shell->env_list = env_init(envp);
-	shell->envp = NULL;
+	shell->envp = env_to_envp(shell->env_list);
 	shell->last_status = 0;
 	shell->stdin_backup = -1;
 	shell->stdout_backup = -1;

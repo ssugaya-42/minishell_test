@@ -12,41 +12,24 @@
 
 #include "shell.h"
 
-static t_env	*env_new(char *key, char *value)
+static void	free_env_list_partial(t_env *env_list)
 {
-	t_env	*node;
+	t_env	*next;
 
-	node = malloc(sizeof(t_env));
-	if (!node)
-		return (NULL);
-	node->key = key;
-	node->value = value;
-	node->next = NULL;
-	return (node);
-}
-
-static void	env_add_back(t_env **env_list, t_env *new_node)
-{
-	t_env	*current;
-
-	if (!env_list || !new_node)
-		return ;
-	if (!*env_list)
+	while (env_list)
 	{
-		*env_list = new_node;
-		return ;
+		next = env_list->next;
+		free(env_list->key);
+		free(env_list->value);
+		free(env_list);
+		env_list = next;
 	}
-	current = *env_list;
-	while (current->next)
-		current = current->next;
-	current->next = new_node;
 }
 
-static t_env	*create_env_node(char *env_str)
+static t_env	*create_env_node(const char *env_str)
 {
 	int		i;
 	char	*key;
-	char	*value;
 	t_env	*node;
 
 	i = 0;
@@ -56,21 +39,10 @@ static t_env	*create_env_node(char *env_str)
 	if (!key)
 		return (NULL);
 	if (env_str[i] == '=')
-		value = ft_strdup(env_str + i + 1);
+		node = env_new_node(key, env_str + i + 1);
 	else
-		value = ft_strdup("");
-	if (!value)
-	{
-		free(key);
-		return (NULL);
-	}
-	node = env_new(key, value);
-	if (!node)
-	{
-		free(key);
-		free(value);
-		return (NULL);
-	}
+		node = env_new_node(key, "");
+	free(key);
 	return (node);
 }
 
@@ -87,14 +59,7 @@ t_env	*env_init(char **envp)
 		new_node = create_env_node(envp[i]);
 		if (!new_node)
 		{
-			while (env_list)
-			{
-				new_node = env_list->next;
-				free(env_list->key);
-				free(env_list->value);
-				free(env_list);
-				env_list = new_node;
-			}
+			free_env_list_partial(env_list);
 			return (NULL);
 		}
 		env_add_back(&env_list, new_node);

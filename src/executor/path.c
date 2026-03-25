@@ -11,18 +11,6 @@
 /* ************************************************************************** */
 
 #include "shell.h"
-#include <unistd.h>
-
-static char	*get_env_value(t_env *env_list, char *key)
-{
-	while (env_list)
-	{
-		if (ft_strcmp(env_list->key, key) == 0)
-			return (env_list->value);
-		env_list = env_list->next;
-	}
-	return (NULL);
-}
 
 static char	*join_path(char *dir, char *cmd)
 {
@@ -70,7 +58,7 @@ char	*resolve_command_path(char *cmd_name, t_shell *shell)
 			return (ft_strdup(cmd_name));
 		return (NULL);
 	}
-	path_value = get_env_value(shell->env_list, "PATH");
+	path_value = env_get_value(shell->env_list, "PATH");
 	if (!path_value)
 		return (NULL);
 	paths = ft_split(path_value, ':');
