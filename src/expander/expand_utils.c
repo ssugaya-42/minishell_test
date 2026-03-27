@@ -78,13 +78,15 @@ static int	append_var_value(char **result, char *src, int *i, t_shell *shell)
 	return (append_str(result, value));
 }
 
-int	expand_one_str(char **str, t_shell *shell)
+int	expand_one_str(char **str, t_quote_type quote, t_shell *shell)
 {
 	char	*result;
 	char	*src;
 	int		i;
 
 	if (!str || !*str || !shell)
+		return (1);
+	if (quote == QUOTE_SINGLE)
 		return (1);
 	result = ft_strdup("");
 	if (!result)
@@ -105,4 +107,3 @@ int	expand_one_str(char **str, t_shell *shell)
 	*str = result;
 	return (1);
 }
-

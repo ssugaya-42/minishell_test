@@ -12,30 +12,29 @@
 
 #include "shell.h"
 
-static void	free_partial_argv(char **argv, int count)
-{
-	while (count > 0)
-	{
-		count--;
-		free(argv[count]);
-	}
-	free(argv);
-}
-
-static int	count_args(t_token *tokens)
+static int	count_words(t_token *tokens)
 {
 	int	count;
+	int	skip_next;
 
 	count = 0;
+	skip_next = 0;
 	while (tokens && tokens->type != TOKEN_PIPE)
 	{
+		if (skip_next)
+		{
+			skip_next = 0;
+			tokens = tokens->next;
+			continue ;
+		}
+		if (is_redir_token(tokens->type))
+		{
+			skip_next = 1;
+			tokens = tokens->next;
+			continue ;
+		}
 		if (tokens->type == TOKEN_WORD)
 			count++;
-		else if (is_redir_token(tokens->type))
-		{
-			if (tokens->next)
-				tokens = tokens->next;
-		}
 		tokens = tokens->next;
 	}
 	return (count);
@@ -49,6 +48,7 @@ t_cmd	*cmd_new(void)
 	if (!new_cmd)
 		return (NULL);
 	new_cmd->argv = NULL;
+	new_cmd->argv_quote = NULL;
 	new_cmd->argc = 0;
 	new_cmd->redirs = NULL;
 	new_cmd->builtin = BI_NONE;
@@ -58,7 +58,7 @@ t_cmd	*cmd_new(void)
 
 void	cmd_add_back(t_cmd **lst, t_cmd *new_cmd)
 {
-	t_cmd	*current;
+	t_cmd	*cur;
 
 	if (!lst || !new_cmd)
 		return ;
@@ -67,10 +67,50 @@ void	cmd_add_back(t_cmd **lst, t_cmd *new_cmd)
 		*lst = new_cmd;
 		return ;
 	}
-	current = *lst;
-	while (current->next)
-		current = current->next;
-	current->next = new_cmd;
+	cur = *lst;
+	while (cur->next)
+		cur = cur->next;
+	cur->next = new_cmd;
+}
+
+static int	fill_argv(t_cmd *cmd, t_token *tokens)
+{
+	int	i;
+	int	skip_next;
+
+	cmd->argc = count_words(tokens);
+	cmd->argv = malloc(sizeof(char *) * (cmd->argc + 1));
+	cmd->argv_quote = malloc(sizeof(t_quote_type) * cmd->argc);
+	if (!cmd->argv || !cmd->argv_quote)
+		return (0);
+	i = 0;
+	skip_next = 0;
+	while (tokens && tokens->type != TOKEN_PIPE)
+	{
+		if (skip_next)
+		{
+			skip_next = 0;
+			tokens = tokens->next;
+			continue ;
+		}
+		if (is_redir_token(tokens->type))
+		{
+			skip_next = 1;
+			tokens = tokens->next;
+			continue ;
+		}
+		if (tokens->type == TOKEN_WORD)
+		{
+			cmd->argv[i] = ft_strdup(tokens->value);
+			if (!cmd->argv[i])
+				return (0);
+			cmd->argv_quote[i] = tokens->quote;
+			i++;
+		}
+		tokens = tokens->next;
+	}
+	cmd->argv[i] = NULL;
+	return (1);
 }
 
 static t_builtin_type	get_builtin_type(char *cmd_name)
@@ -94,71 +134,29 @@ static t_builtin_type	get_builtin_type(char *cmd_name)
 	return (BI_NONE);
 }
 
-static int	fill_argv(t_cmd *cmd, t_token *tokens)
-{
-	int	i;
-
-	cmd->argc = count_args(tokens);
-	cmd->argv = malloc(sizeof(char *) * (cmd->argc + 1));
-	if (!cmd->argv)
-		return (0);
-	i = 0;
-	while (tokens && tokens->type != TOKEN_PIPE)
-	{
-		if (tokens->type == TOKEN_WORD)
-		{
-			cmd->argv[i] = ft_strdup(tokens->value);
-			if (!cmd->argv[i])
-			{
-				free_partial_argv(cmd->argv, i);
-				cmd->argv = NULL;
-				return (0);
-			}
-			i++;
-		}
-		else if (is_redir_token(tokens->type))
-		{
-			if (tokens->next)
-				tokens = tokens->next;
-		}
-		tokens = tokens->next;
-	}
-	cmd->argv[i] = NULL;
-	return (1);
-}
-
 t_cmd	*parse_tokens(t_token *tokens)
 {
 	t_cmd	*cmds;
 	t_cmd	*new_cmd;
+	t_token	*start;
 
 	cmds = NULL;
 	while (tokens)
 	{
+		start = tokens;
+		while (tokens && tokens->type != TOKEN_PIPE)
+			tokens = tokens->next;
 		new_cmd = cmd_new();
 		if (!new_cmd)
-		{
-			free_cmds(cmds);
 			return (NULL);
-		}
-		if (!fill_argv(new_cmd, tokens))
-		{
-			free_cmds(new_cmd);
-			free_cmds(cmds);
+		if (!fill_argv(new_cmd, start))
 			return (NULL);
-		}
-		if (!parse_redirs(new_cmd, tokens))
-		{
-			free_cmds(new_cmd);
-			free_cmds(cmds);
+		if (!parse_redirs(new_cmd, start))
 			return (NULL);
-		}
 		if (new_cmd->argv && new_cmd->argv[0])
 			new_cmd->builtin = get_builtin_type(new_cmd->argv[0]);
 		cmd_add_back(&cmds, new_cmd);
-		while (tokens && tokens->type != TOKEN_PIPE)
-			tokens = tokens->next;
-		if (tokens && tokens->type == TOKEN_PIPE)
+		if (tokens)
 			tokens = tokens->next;
 	}
 	return (cmds);
