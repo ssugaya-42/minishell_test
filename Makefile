@@ -13,6 +13,7 @@ SRCS		= \
 	src/builtin/ms_pwd.c \
 	src/builtin/ms_env.c \
 	src/builtin/ms_export.c \
+	src/builtin/ms_export_utils.c \
 	src/builtin/ms_unset.c \
 	src/builtin/ms_exit.c \
 	src/expander/expand.c \

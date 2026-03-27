@@ -56,11 +56,22 @@ void	free_redirs(t_redir *redirs)
 void	free_cmds(t_cmd *cmds)
 {
 	t_cmd	*next;
+	int		i;
 
 	while (cmds)
 	{
 		next = cmds->next;
-		free_str_array(cmds->argv);
+		if (cmds->argv)
+		{
+			i = 0;
+			while (cmds->argv[i])
+			{
+				free(cmds->argv[i]);
+				i++;
+			}
+			free(cmds->argv);
+		}
+		free(cmds->argv_quote);
 		free_redirs(cmds->redirs);
 		free(cmds);
 		cmds = next;
