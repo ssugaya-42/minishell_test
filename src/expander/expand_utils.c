@@ -78,32 +78,53 @@ static int	append_var_value(char **result, char *src, int *i, t_shell *shell)
 	return (append_str(result, value));
 }
 
-int	expand_one_str(char **str, t_quote_type quote, t_shell *shell)
+char	*expand_part_value(char *value, t_quote_type quote, t_shell *shell)
 {
 	char	*result;
-	char	*src;
 	int		i;
 
-	if (!str || !*str || !shell)
-		return (1);
+	if (!value || !shell)
+		return (NULL);
 	if (quote == QUOTE_SINGLE)
-		return (1);
+		return (ft_strdup(value));
 	result = ft_strdup("");
 	if (!result)
-		return (0);
-	src = *str;
+		return (NULL);
 	i = 0;
-	while (src[i])
+	while (value[i])
 	{
-		if (src[i] == '$')
+		if (value[i] == '$')
 		{
-			if (!append_var_value(&result, src, &i, shell))
-				return (free(result), 0);
+			if (!append_var_value(&result, value, &i, shell))
+				return (free(result), NULL);
 		}
-		else if (!append_char(&result, src[i++]))
-			return (free(result), 0);
+		else if (!append_char(&result, value[i++]))
+			return (free(result), NULL);
 	}
-	free(*str);
-	*str = result;
-	return (1);
+	return (result);
+}
+
+char	*expand_word_parts(t_word_part *parts, t_shell *shell)
+{
+	char	*result;
+	char	*expanded;
+	char	*new_result;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	while (parts)
+	{
+		expanded = expand_part_value(parts->value, parts->quote, shell);
+		if (!expanded)
+			return (free(result), NULL);
+		new_result = ft_strjoin(result, expanded);
+		free(result);
+		free(expanded);
+		if (!new_result)
+			return (NULL);
+		result = new_result;
+		parts = parts->next;
+	}
+	return (result);
 }
