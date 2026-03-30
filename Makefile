@@ -1,13 +1,13 @@
-NAME		= minishell
+NAME = minishell
 
-CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
-INCLUDES	= -Iincludes -Ilibft/includes
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+INCLUDES = -Iincludes -Ilibft/includes
 
-LIBFT_DIR	= libft
-LIBFT		= $(LIBFT_DIR)/libft.a
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS		= \
+SRCS = \
 	src/builtin/ms_echo.c \
 	src/builtin/ms_cd.c \
 	src/builtin/ms_pwd.c \
@@ -47,7 +47,7 @@ SRCS		= \
 	src/executor/path.c \
 	src/executor/redir.c
 
-OBJS		= $(SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o)
 
 READLINE_LIBS = -lreadline
 
