@@ -5,12 +5,39 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-30 08:19:22 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-30 08:19:22 by ssugaya          ###   ########.fr       */
+/*   Created: 2026-03-30 08:36:23 by ssugaya           #+#    #+#             */
+/*   Updated: 2026-03-30 08:36:23 by ssugaya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
+
+void	free_word_parts(t_word_part *parts)
+{
+	t_word_part	*next;
+
+	while (parts)
+	{
+		next = parts->next;
+		free(parts->value);
+		free(parts);
+		parts = next;
+	}
+}
+
+void	free_tokens(t_token *tokens)
+{
+	t_token	*next;
+
+	while (tokens)
+	{
+		next = tokens->next;
+		free(tokens->value);
+		free_word_parts(tokens->parts);
+		free(tokens);
+		tokens = next;
+	}
+}
 
 static void	free_args(t_arg *args, int argc)
 {

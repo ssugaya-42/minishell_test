@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-12 07:52:43 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-12 07:52:43 by ssugaya          ###   ########.fr       */
+/*   Created: 2026-03-30 08:34:58 by ssugaya           #+#    #+#             */
+/*   Updated: 2026-03-30 08:34:58 by ssugaya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,12 @@ static void	process_line(t_shell *shell, char *line)
 	free_tokens(tokens);
 	if (!cmds)
 		return ;
-	expand_cmds(cmds, shell);
+	if (!expand_cmds(cmds, shell))
+	{
+		shell->last_status = 1;
+		free_cmds(cmds);
+		return ;
+	}
 	execute_cmds(cmds, shell);
 	free_cmds(cmds);
 }

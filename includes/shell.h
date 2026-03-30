@@ -42,7 +42,7 @@ t_redir			*redir_new(t_token_type type, t_word_part *file_parts);
 void			redir_add_back(t_redir **lst, t_redir *new_redir);
 
 /* expander */
-void			expand_cmds(t_cmd *cmds, t_shell *shell);
+int				expand_cmds(t_cmd *cmds, t_shell *shell);
 char			*expand_word_parts(t_word_part *parts, t_shell *shell);
 char			*expand_part_value(char *value, t_quote_type quote, t_shell *shell);
 int				build_cmd_argv(t_cmd *cmd);

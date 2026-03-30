@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-30 08:19:09 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-30 08:19:09 by ssugaya          ###   ########.fr       */
+/*   Created: 2026-03-30 08:35:33 by ssugaya           #+#    #+#             */
+/*   Updated: 2026-03-30 08:35:33 by ssugaya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,16 +93,17 @@ static int	expand_args(t_cmd *cmd, t_shell *shell)
 	return (1);
 }
 
-void	expand_cmds(t_cmd *cmds, t_shell *shell)
+int	expand_cmds(t_cmd *cmds, t_shell *shell)
 {
 	while (cmds)
 	{
 		if (!expand_args(cmds, shell))
-			return ;
+			return (0);
 		if (!expand_redirs(cmds->redirs, shell))
-			return ;
+			return (0);
 		if (!build_cmd_argv(cmds))
-			return ;
+			return (0);
 		cmds = cmds->next;
 	}
+	return (1);
 }
