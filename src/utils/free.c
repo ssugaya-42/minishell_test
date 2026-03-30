@@ -83,3 +83,42 @@ void	free_cmds(t_cmd *cmds)
 		cmds = next;
 	}
 }
+
+void	free_str_array(char **arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
+
+static void	free_env_list(t_env *env)
+{
+	t_env	*next;
+
+	while (env)
+	{
+		next = env->next;
+		free(env->key);
+		free(env->value);
+		free(env);
+		env = next;
+	}
+}
+
+void	free_shell(t_shell *shell)
+{
+	if (!shell)
+		return ;
+	free_env_list(shell->env_list);
+	shell->env_list = NULL;
+	free_envp(shell->envp);
+	shell->envp = NULL;
+}
