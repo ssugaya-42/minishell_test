@@ -5,39 +5,27 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssugaya <ssugaya@student.42.fr>            #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-03-12 18:32:15 by ssugaya           #+#    #+#             */
-/*   Updated: 2026-03-12 18:32:15 by ssugaya          ###   ########.fr       */
+/*   Created: 2026-03-30 08:19:22 by ssugaya           #+#    #+#             */
+/*   Updated: 2026-03-30 08:19:22 by ssugaya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	free_str_array(char **arr)
+static void	free_args(t_arg *args, int argc)
 {
 	int	i;
 
-	if (!arr)
+	if (!args)
 		return ;
 	i = 0;
-	while (arr[i])
+	while (i < argc)
 	{
-		free(arr[i]);
+		free_word_parts(args[i].parts);
+		free(args[i].value);
 		i++;
 	}
-	free(arr);
-}
-
-void	free_tokens(t_token *tokens)
-{
-	t_token	*next;
-
-	while (tokens)
-	{
-		next = tokens->next;
-		free(tokens->value);
-		free(tokens);
-		tokens = next;
-	}
+	free(args);
 }
 
 void	free_redirs(t_redir *redirs)
@@ -47,6 +35,7 @@ void	free_redirs(t_redir *redirs)
 	while (redirs)
 	{
 		next = redirs->next;
+		free_word_parts(redirs->file_parts);
 		free(redirs->file);
 		free(redirs);
 		redirs = next;
@@ -56,47 +45,14 @@ void	free_redirs(t_redir *redirs)
 void	free_cmds(t_cmd *cmds)
 {
 	t_cmd	*next;
-	int		i;
 
 	while (cmds)
 	{
 		next = cmds->next;
-		if (cmds->argv)
-		{
-			i = 0;
-			while (cmds->argv[i])
-			{
-				free(cmds->argv[i]);
-				i++;
-			}
-			free(cmds->argv);
-		}
-		free(cmds->argv_quote);
+		free_args(cmds->args, cmds->argc);
+		free_str_array(cmds->argv);
 		free_redirs(cmds->redirs);
 		free(cmds);
 		cmds = next;
 	}
-}
-
-void	free_shell(t_shell *shell)
-{
-	t_env	*current;
-	t_env	*next;
-
-	if (!shell)
-		return ;
-	current = shell->env_list;
-	while (current)
-	{
-		next = current->next;
-		free(current->key);
-		free(current->value);
-		free(current);
-		current = next;
-	}
-	free_str_array(shell->envp);
-	if (shell->stdin_backup >= 0)
-		close(shell->stdin_backup);
-	if (shell->stdout_backup >= 0)
-		close(shell->stdout_backup);
 }
